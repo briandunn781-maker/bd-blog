@@ -1,0 +1,35 @@
+# Render Blueprint: one web service that runs the API and serves the built React site.
+# Secrets marked `sync: false` are entered in the Render dashboard and never committed.
+services:
+  - type: web
+    name: bd-blog
+    runtime: node
+    plan: free
+    branch: main
+    # Deploy only after the GitHub Actions CI checks pass on the commit
+    autoDeployTrigger: checksPass
+    buildCommand: npm run build:render
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_URL
+        value: https://bd-blog.onrender.com
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: TURNSTILE_SECRET_KEY
+        sync: false
+      # Read at build time by Vite, so changing it needs a redeploy
+      - key: VITE_TURNSTILE_SITE_KEY
+        sync: false
